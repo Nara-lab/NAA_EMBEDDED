@@ -1,0 +1,31 @@
+#define MTU 1500
+
+struct sockaddr_in LocalEndPoint;
+struct sockaddr_in RemoteEndPoint;
+
+int socketHandle = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+if(socketHandle == -1)
+   printf("Error 1");
+else
+   printf("Socket created");
+
+memset((char*)&LocalEndPoint, 0, sizeof(LocalEndPoint));
+LocalEndPoint.sin_family = AF_INET;
+LocalEndPoint.sin_port = htons(51610);
+LocalEndPoint.sin_addr.s_addr = htonl(INADDR_ANY);
+
+int bind_ret_val = bind(socketHandle, (sockaddr*)&LocalEndPoint, sizeof(LocalEndPoint)) < 0;
+
+if(bind_ret_val < 0)
+   printf("Error 2");
+else
+   printf("Bound");
+
+char* buffer = new char[MTU];
+unsigned int msg_length;
+socklen_t addressSize0 = sizeof(RemoteEndPoint);
+
+printf("Waiting for packet");
+msg_length = recvfrom(socketHandle, buffer, MTU, 0, (struct sockaddr*)&RemoteEndPoint, &addressSize0);
+printf("Packet received");
