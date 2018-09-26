@@ -70,3 +70,57 @@
 
         file.close();
         }
+        
+        
+        if(streamreadObject.name() == string)
+    {
+        while(!streamreadObject.atEnd())
+        {
+            if(streamreadObject.isEndElement())
+            {
+                streamreadObject.readNext();
+                break;
+            }
+            else if(streamreadObject.isCharacters())
+            {
+                streamreadObject.readNext();
+            }
+            else if(streamreadObject.isStartElement())
+            {
+                if(streamreadObject.name() == TYP)
+                {
+                    type_element = streamreadObject.readElementText();
+                    Emb_FileXML.controlType = type_element;
+                    streamreadObject.readNext();
+                }
+                else if(streamreadObject.name() == VAL)
+                {
+                        Value_element = streamreadObject.readElementText();
+                        Emb_FileXML.value = Value_element.toInt();
+                        streamreadObject.readNext();
+                }
+                else if(streamreadObject.name() == RANGE)
+                {
+                        QString Range_element = streamreadObject.readElementText();
+                        Emb_FileXML.range = Range_element.toInt();
+                        streamreadObject.readNext();
+                }
+                else if(streamreadObject.name() == ENABLE)
+                {
+                        QString enable_disable = streamreadObject.readElementText();
+                        Emb_FileXML.enable_Disable = enable_disable.toInt();
+                        streamreadObject.readNext();
+                }
+                else if(streamreadObject.name() == VISIBLE)
+                {
+                        QString Visible_element = streamreadObject.readElementText();
+                        Emb_FileXML.visible = Visible_element.toInt();
+                }
+                     streamreadObject.readNext();
+                }
+                else
+                {
+                     streamreadObject.readNext();
+                }
+        }
+    }
