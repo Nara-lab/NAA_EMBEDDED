@@ -1,0 +1,72 @@
+    file_Path = QApplication::applicationDirPath();
+    file_Path = file_Path + string;
+    QFile file(file_Path);
+      if (!file.open(QFile::ReadOnly | QFile::Text))
+        {
+            qDebug() << READ_ERROR;
+        }
+
+        ReadXML.setDevice(&file);
+
+        while(!ReadXML.atEnd())
+        {
+            if(ReadXML.isStartElement())
+            {
+                if(ReadXML.name() == GUI_CTLR)
+                {
+                    ReadXML.readNext();
+                }
+                else if(ReadXML.name() == T_CTRL)
+                {
+                        while(!ReadXML.atEnd())
+                        {
+                            if(ReadXML.isEndElement())
+                            {
+                                ReadXML.readNext();
+                                break;
+                            }
+                            else if(ReadXML.isCharacters())
+                            {
+                                ReadXML.readNext();
+                            }
+                            else if(ReadXML.isStartElement())
+                            {
+
+                                if(ReadXML.name() == VAL)
+                                {
+                                     QString total = ReadXML.readElementText();
+                                     _total = total.toInt();
+                                     Emb_FileXML.total_Cntrls = _total;
+                                        ReadXML.readNext();
+                                }
+
+                                     ReadXML.readNext();
+                                }
+                                else
+                                {
+                                     ReadXML.readNext();
+                                }
+                        }
+                        ReadXML.readNext();
+                    }
+                for(int i = 1; i <= _total; i++)
+                {
+                    if(string == CONVEYOR_PATH)
+                    {
+                        QString str = QString::number(i);
+                        if(ReadXML.name() == TBOX+ str)
+                        {
+                            elements(TBOX+str);
+                            Conveyor_Data();
+                            ReadXML.readNext();
+                        }
+                    }
+                }
+            }
+        else
+        {
+            ReadXML.readNext();
+        }
+
+        file.close();
+        }
