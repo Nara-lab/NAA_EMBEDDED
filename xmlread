@@ -6,66 +6,66 @@
             qDebug() << READ_ERROR;
         }
 
-        ReadXML.setDevice(&file);
+        streamreadObject.setDevice(&file);
 
-        while(!ReadXML.atEnd())
+        while(!streamreadObject.atEnd())
         {
-            if(ReadXML.isStartElement())
+            if(streamreadObject.isStartElement())
             {
-                if(ReadXML.name() == GUI_CTLR)
+                if(streamreadObject.name() == GUI_CTLR)
                 {
-                    ReadXML.readNext();
+                    streamreadObject.readNext();
                 }
-                else if(ReadXML.name() == T_CTRL)
+                else if(streamreadObject.name() == T_CTRL)
                 {
-                        while(!ReadXML.atEnd())
+                        while(!streamreadObject.atEnd())
                         {
-                            if(ReadXML.isEndElement())
+                            if(streamreadObject.isEndElement())
                             {
-                                ReadXML.readNext();
+                                streamreadObject.readNext();
                                 break;
                             }
-                            else if(ReadXML.isCharacters())
+                            else if(streamreadObject.isCharacters())
                             {
-                                ReadXML.readNext();
+                                streamreadObject.readNext();
                             }
-                            else if(ReadXML.isStartElement())
+                            else if(streamreadObject.isStartElement())
                             {
 
-                                if(ReadXML.name() == VAL)
+                                if(streamreadObject.name() == VAL)
                                 {
-                                     QString total = ReadXML.readElementText();
+                                     QString total = streamreadObject.readElementText();
                                      _total = total.toInt();
                                      Emb_FileXML.total_Cntrls = _total;
-                                        ReadXML.readNext();
+                                        streamreadObject.readNext();
                                 }
 
-                                     ReadXML.readNext();
+                                     streamreadObject.readNext();
                                 }
                                 else
                                 {
-                                     ReadXML.readNext();
+                                     streamreadObject.readNext();
                                 }
                         }
-                        ReadXML.readNext();
+                        streamreadObject.readNext();
                     }
                 for(int i = 1; i <= _total; i++)
                 {
                     if(string == CONVEYOR_PATH)
                     {
                         QString str = QString::number(i);
-                        if(ReadXML.name() == TBOX+ str)
+                        if(streamreadObject.name() == TBOX+ str)
                         {
                             elements(TBOX+str);
                             Conveyor_Data();
-                            ReadXML.readNext();
+                            streamreadObject.readNext();
                         }
                     }
                 }
             }
         else
         {
-            ReadXML.readNext();
+            streamreadObject.readNext();
         }
 
         file.close();
