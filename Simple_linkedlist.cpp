@@ -3,7 +3,7 @@ typedef struct Node
     int data;
     Node *next;
 };
-  Node *head;
+Node *head;
 void add_list(int value)
 {
     Node *curret,*temp = new Node;
