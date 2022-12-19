@@ -1,0 +1,74 @@
+#include <iostream>
+#include <queue>
+#include <condition_variable>
+#include <thread>
+#include <mutex>
+#include <string>
+ 
+using namespace std;
+
+queue<long> dataQ; 
+ 
+mutex pc_mu, print_mu; 
+ 
+condition_variable consumerwait_cv; 
+ 
+ 
+void Print(string str)
+{
+	lock_guard<mutex> lg(print_mu); 
+	cout << str << endl;
+}
+ 
+void Producer()
+{
+	int index = 0;
+	while (1)
+	{
+		unique_lock<mutex> ul(pc_mu);
+		if (dataQ.size() >= 5) 
+		{
+			consumerwait_cv.wait(ul, []() {return !(dataQ.size() >= 5); });
+		}
+ 
+		dataQ.push(index);
+		ul.unlock(); 
+		consumerwait_cv.notify_one();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+ 
+		Print(" Producer produced " + to_string(index));
+ 
+		index++;
+	}
+}
+ 
+void Consumer()
+{
+	while (1)
+	{
+		unique_lock<mutex> ul(pc_mu);
+		if (dataQ.empty())
+		{
+			consumerwait_cv.wait(ul, []() {return !dataQ.empty(); }); 
+		}
+ 
+		ul.unlock();
+		int element = dataQ.front();
+		dataQ.pop();
+ 
+		consumerwait_cv.wake_all();
+		this_thread::sleep_for(chrono::milliseconds(1000)); 
+		Print(" Consumer got " + to_string(element));
+	}
+}
+ 
+ 
+int main()
+{
+	thread prod(Producer);
+	thread cons(Consumer);
+ 
+	prod.detach();
+	cons.detach();
+	while (1); 
+}  
